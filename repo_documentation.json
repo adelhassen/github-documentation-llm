@@ -1,0 +1,147 @@
+{
+  "repo_summary": "The flight-delays repository provides a complete machine learning pipeline for predicting flight delays based on historical flight data. It implements data ingestion, feature engineering, model training (including tuning with Hyperopt), model tracking with MLflow, deployment as a Flask API within Docker, and monitoring using Evidently. It aims to provide an industry-grade MLOps workflow incorporating experiment tracking, workflow orchestration with Prefect, and continuous monitoring to improve prediction accuracy and operational efficiency.",
+  "components": [
+    {
+      "name": "Data ingestion and preprocessing",
+      "description": "Handles reading zipped CSV flight data files, merging with airline codes, selecting relevant columns, and cleaning data to prepare for model training.",
+      "files": [
+        "src/main.py",
+        "notebooks/flight_data_code.ipynb"
+      ]
+    },
+    {
+      "name": "Feature engineering and transformation",
+      "description": "Processes raw features into model-ready input, including time feature transformation into minutes and creation of cyclical features to preserve periodicity, plus vectorization of categorical and numerical features.",
+      "files": [
+        "src/main.py",
+        "notebooks/flight_data_code.ipynb"
+      ]
+    },
+    {
+      "name": "Model training and tuning",
+      "description": "Trains base models such as Logistic Regression and XGBoost classifier, tunes hyperparameters with Hyperopt, logs experiments and metrics with MLflow, and registers the best model.",
+      "files": [
+        "src/main.py",
+        "notebooks/flight_data_code.ipynb"
+      ]
+    },
+    {
+      "name": "API deployment",
+      "description": "Deploys the best trained model as a Flask web API service that receives flight feature data and returns delay predictions, suitable for containerized deployment with Docker.",
+      "files": [
+        "src/predict.py",
+        "src/example.py"
+      ]
+    },
+    {
+      "name": "Monitoring and reporting",
+      "description": "Generates monitoring reports using Evidently to track data drift and classification performance on validation data compared to training data, and uploads reports to AWS S3 for accessibility.",
+      "files": [
+        "src/main.py"
+      ]
+    },
+    {
+      "name": "Infrastructure and Environment Setup",
+      "description": "Manages environment variables, Docker containerization of the API server, and workflow orchestration using Prefect. Provides makefile targets for setup, quality checks, and testing.",
+      "files": [
+        "Dockerfile",
+        "set_env.sh",
+        "Makefile",
+        ".pre-commit-config.yaml"
+      ]
+    },
+    {
+      "name": "Testing",
+      "description": "Includes unit tests for data reading and feature engineering functionalities as well as an integration test to verify API endpoint responsiveness.",
+      "files": [
+        "tests/unit_tests.py",
+        "tests/integration_test.py"
+      ]
+    }
+  ],
+  "file_summaries": [
+    {
+      "path": ".pre-commit-config.yaml",
+      "summary": "Configuration file for pre-commit hooks to enforce code quality standards using tools like black and check-yaml."
+    },
+    {
+      "path": "Dockerfile",
+      "summary": "Docker configuration to build a slim Python 3.11 container, install dependencies using pipenv, setup environment, copy prediction script, expose ports, and run the Flask API with gunicorn."
+    },
+    {
+      "path": "Makefile",
+      "summary": "Defines commands to set environment variables, setup the development environment, run code quality checks with black, and execute unit and integration tests."
+    },
+    {
+      "path": "Pipfile",
+      "summary": "Specifies project dependencies including versions for ML libraries, web frameworks, MLOps tools, and utilities."
+    },
+    {
+      "path": "Pipfile.lock",
+      "summary": "Lock file containing pinned versions and hashes of all Python dependencies to ensure reproducible installs."
+    },
+    {
+      "path": "README.md",
+      "summary": "Comprehensive project documentation covering overall purpose, setup instructions, pipeline components for flight delay prediction with MLOps best practices, usage instructions, testing, and future improvement plans."
+    },
+    {
+      "path": "notebooks/flight_data_code.ipynb",
+      "summary": "Interactive Jupyter notebook performing exploratory data analysis, data preprocessing, feature engineering, model training and evaluation, hyperparameter tuning, model registration, API testing, and monitoring report generation."
+    },
+    {
+      "path": "set_env.sh",
+      "summary": "Shell script template to configure and export required environment variables for AWS credentials, MLflow, and Prefect."
+    },
+    {
+      "path": "src/__init__.py",
+      "summary": "Empty init file indicating src is a Python module."
+    },
+    {
+      "path": "src/example.py",
+      "summary": "Example script that sends a POST request with flight feature data to the prediction API to obtain and print delay predictions."
+    },
+    {
+      "path": "src/main.py",
+      "summary": "Core ML pipeline script orchestrated as a Prefect flow. Includes tasks for reading data, feature engineering, data transformation, model training, hyperparameter tuning with Hyperopt, model registration with MLflow, and generation of monitoring reports using Evidently. Also manages environment loading and experiment setup."
+    },
+    {
+      "path": "src/predict.py",
+      "summary": "Flask API server that loads the registered XGBoost model and vectorizer from AWS S3 via MLflow, exposes a /predict POST endpoint to receive flight features and respond with delay prediction messages."
+    },
+    {
+      "path": "tests/integration_test.py",
+      "summary": "Integration test script that tests the deployed prediction API endpoint by sending a sample flight feature payload and verifying the response is valid."
+    },
+    {
+      "path": "tests/unit_tests.py",
+      "summary": "Unit test script validating the correctness of data reading and feature engineering functions."
+    }
+  ],
+  "dependencies": [
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "xgboost",
+    "mlflow",
+    "hyperopt",
+    "flask",
+    "gunicorn",
+    "prefect",
+    "evidently",
+    "boto3",
+    "python-dotenv",
+    "seaborn",
+    "matplotlib",
+    "requests",
+    "pickle"
+  ],
+  "notes": [
+    "This repository implements an industry-level end-to-end machine learning project for flight delay prediction, leveraging major MLOps tools such as MLflow for experiment tracking and model registry, Prefect for workflow orchestration, Docker for containerized deployment, and Evidently for monitoring model/data drift.",
+    "The ML pipeline is designed to be triggered both as a Prefect scheduled flow and manually through the main.py script.",
+    "Model deployment is handled by a Flask API serving predictions through a REST endpoint, which is containerized with Docker and listens on port 9696.",
+    "The project ensures no data leakage by carefully selecting only features available prior to flight departure and using a binary classification target indicating delays beyond 15 minutes.",
+    "AWS S3 is used for storing artifacts, model versions, and monitoring reports.",
+    "Testing includes both unit tests for core functions and integration tests for verifying API endpoint communication.",
+    "The notebooks/flight_data_code.ipynb notebook contains exploratory data analysis and prototyping which appears aligned with the production pipeline implemented in src/main.py."
+  ]
+}
